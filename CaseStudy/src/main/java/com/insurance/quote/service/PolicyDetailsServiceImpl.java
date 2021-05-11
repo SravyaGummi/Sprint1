@@ -12,7 +12,7 @@ import com.insurance.quote.entities.PolicyQuestions;
 
 public class PolicyDetailsServiceImpl implements PolicyDetailsService {
 	int i = 0, premium, weightAge, policyNumber, answerWeightAge;
-	String str_answer, str_qId, str_quesDesc, questionId, questionDesc, answer;
+	String strAnswer, strQId, strQuesDesc, questionId, questionDesc, answer;
 
 	PolicyDaoImpl polDao = new PolicyDaoImpl();
 	PolicyDetailsDaoImpl polDetailsDao = new PolicyDetailsDaoImpl();
@@ -44,16 +44,16 @@ public class PolicyDetailsServiceImpl implements PolicyDetailsService {
 			ans.get(i);
 			List<String> qId = polList.stream().filter(seq -> seq.getPolQuesSeq() == (i + 1))
 					.map(id -> id.getPolQuesId()).collect(Collectors.toList());
-			str_qId = qId.get(0);
+			strQId = qId.get(0);
 			List<String> quesDesc = polList.stream().filter(seq -> seq.getPolQuesSeq() == (i + 1))
-					.map(ques -> ques.getPol_Ques_Desc()).collect(Collectors.toList());
-			str_quesDesc = quesDesc.get(0);
+					.map(ques -> ques.getPolQuesDesc()).collect(Collectors.toList());
+			strQuesDesc = quesDesc.get(0);
 			if (ans.get(i) == 1) {
 				List<String> answer = polList.stream().filter(seq -> seq.getPolQuesSeq() == (i + 1))
-						.map(ans1 -> ans1.getPol_Ques_Ans1()).collect(Collectors.toList());
+						.map(ans1 -> ans1.getPolQuesAns1()).collect(Collectors.toList());
 				List<Integer> answerWeight = polList.stream().filter(seq -> seq.getPolQuesSeq() == (i + 1))
 						.map(ans1 -> ans1.getPolQuesAns1weightage()).collect(Collectors.toList());
-				str_answer = answer.get(0);
+				strAnswer = answer.get(0);
 				weightAge = answerWeight.get(0);
 				premium += weightAge;
 			} else if (ans.get(i) == 2) {
@@ -61,7 +61,7 @@ public class PolicyDetailsServiceImpl implements PolicyDetailsService {
 						.map(ans2 -> ans2.getPolQuesAns2()).collect(Collectors.toList());
 				List<Integer> answerWeight = polList.stream().filter(seq -> seq.getPolQuesSeq() == (i + 1))
 						.map(ans2 -> ans2.getPolQuesAns2weightage()).collect(Collectors.toList());
-				str_answer = answer.get(0);
+				strAnswer = answer.get(0);
 				weightAge = answerWeight.get(0);
 				premium += weightAge;
 			} else if (ans.get(i) == 3) {
@@ -69,11 +69,11 @@ public class PolicyDetailsServiceImpl implements PolicyDetailsService {
 						.map(ans3 -> ans3.getPolQuesAns3()).collect(Collectors.toList());
 				List<Integer> answerWeight = polList.stream().filter(seq -> seq.getPolQuesSeq() == (i + 1))
 						.map(ans3 -> ans3.getPolQuesAns3weightage()).collect(Collectors.toList());
-				str_answer = answer.get(0);
+				strAnswer = answer.get(0);
 				weightAge = answerWeight.get(0);
 				premium += weightAge;
 			}
-			polDetails = new PolicyDetails(polNum, str_qId, str_quesDesc, str_answer, weightAge);
+			polDetails = new PolicyDetails(polNum, strQId, strQuesDesc, strAnswer, weightAge);
 			System.out.println(polDetails);
 			polDetailsDao.beginTransaction();
 			System.out.println(polDetailsDao.insertDetails(polDetails));

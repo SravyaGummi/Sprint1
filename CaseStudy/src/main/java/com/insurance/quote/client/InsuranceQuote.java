@@ -24,7 +24,7 @@ import com.insurance.quote.entities.PolicyDetails;
 
 public class InsuranceQuote {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		String roleCode = null;
 		UserService userService = new UserServiceImpl();
 		
@@ -40,39 +40,39 @@ public class InsuranceQuote {
 
 		String logflag = "N";
 		String exitflag = "N";
-		while (!exitflag.equals("Y")) {
+		try {  while (!exitflag.equals("Y")) {
 		int attempt=0;
 		//System.out.println(logflag+" "+exitflag+" "+attempt);
-					while(roleCode==null) {
+				while(roleCode==null) {
 					attempt++;
 					System.out.println("Enter Login Credentials: ");
 					user = userService.getInputCheck();
 					roleCode = userService.validateUser(user);
 					System.out.println(roleCode);	//test
-					if(attempt==3 && roleCode==null){
+					if(attempt==2 && roleCode==null){
+						System.out.println(logflag+" "+exitflag+" inside rolecode==null");
 						break;
 					}
 				}
 				
 			System.out.println(logflag);
 			
-			while (!logflag.equals("Y")) {			//changed N to Y
-
-				if (roleCode != null) {
+			if((!logflag.equals("Y")) && (roleCode != null)) {
 					System.out.println(roleCode);	//test
 					userService.doUserOperations(roleCode, user);
-				}
-
+			}
 				System.out.println("Do you want to exit ? (Y/N)");
 				exitflag = s1.next().toUpperCase();
-				System.out.println(logflag+" "+exitflag);}		//64-68
+				System.out.println(logflag+" "+exitflag);
 			
 				if (exitflag.equals("N")) {
 					logflag = "N";
 					System.out.println("Trying to not exit");
-					System.out.println(logflag+" "+exitflag+" "+attempt);
+					System.out.println(logflag+" "+exitflag);
 				}
 			
+		}}catch(Exception e) {
+					System.out.println(e);
 		}
 
 		 s1.close();
@@ -80,5 +80,4 @@ public class InsuranceQuote {
 //		accountService.closeResources();
 //		policyDetailsService.closeResources();
 
-	}
-}
+	}	}

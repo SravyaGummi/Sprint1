@@ -44,13 +44,20 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public AccountCreation getInput(UserCreation user) {
+	public AccountCreation getInput(UserCreation user,String roleCode) {
 		// takes input from user for account creation
+		System.out.println(user+" "+roleCode);
+		
+		
 		s1 = new Scanner(System.in);
 		System.out.println("Enter choice of Business Segment");
 		choice = s1.nextLine();
+		if(roleCode.equals("insured")||roleCode.equals("Insured")) {
+			uName=user.getUserName();
+		}
+		else {
 		System.out.println("Enter user Name ");
-		uName = s1.nextLine();
+		uName = s1.nextLine();}
 		System.out.println("Enter Name ");
 		name = s1.nextLine();
 		System.out.println("Enter street ");

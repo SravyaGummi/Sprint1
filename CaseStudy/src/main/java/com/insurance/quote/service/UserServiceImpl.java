@@ -137,8 +137,8 @@ public class UserServiceImpl implements UserService {
 //		  {8,20}                            # length at least 8 characters and maximum of 20 characters
 //		$                                   # end of line
 		try {
-			String password_regex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$";
-			Pattern pattern = Pattern.compile(password_regex);
+			String passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$";
+			Pattern pattern = Pattern.compile(passwordRegex);
 			Matcher matcher = pattern.matcher(password);
 
 			System.out.println("Enter Role ");
@@ -177,14 +177,14 @@ public class UserServiceImpl implements UserService {
 			switch (option) {
 			case 1:// account creation
 
-				userName = accountService.getInput(); // Takes input for account creation
+				userName = user.getUserName();
 				if (userName != null) {
 					for (String bSeg : accountService.getBusinessSegment()) { // to display the existing options of different business segments
 						System.out.println(num + " " + bSeg);
 						num++;
 					}
 
-					account = accountService.getInput(user); // takes necessary inputs for user creation which are stored in entity class constructor and returns its object
+					account = accountService.getInput(user,roleCode); // takes necessary inputs for user creation which are stored in entity class constructor and returns its object
 					System.out.println(account);
 					if (account.getInsuredName() != null) {
 						System.out.println(account);
@@ -227,7 +227,7 @@ public class UserServiceImpl implements UserService {
 						num++;
 					}
 
-					account = accountService.getInput(user); // takes necessary inputs for user creation which are stored in entity class constructor and returns its object
+					account = accountService.getInput(user,roleCode); // takes necessary inputs for user creation which are stored in entity class constructor and returns its object
 					System.out.println(account);
 					if (account.getInsuredName() != null) {
 						System.out.println(account);
@@ -304,7 +304,7 @@ public class UserServiceImpl implements UserService {
 						num++;
 					}
 
-					account = accountService.getInput(user); // takes necessary inputs for user creation which are stored in entity class constructor and returns its object
+					account = accountService.getInput(user,roleCode); // takes necessary inputs for user creation which are stored in entity class constructor and returns its object
 					System.out.println(account);
 					if (account.getInsuredName() != null) {
 						System.out.println(account);

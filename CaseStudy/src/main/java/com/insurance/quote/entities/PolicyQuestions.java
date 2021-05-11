@@ -48,11 +48,11 @@ public class PolicyQuestions implements Serializable{
 		return busSegId;
 	}
 
-	public String getPol_Ques_Desc() {
+	public String getPolQuesDesc() {
 		return polQuesDesc;
 	}
 
-	public String getPol_Ques_Ans1() {
+	public String getPolQuesAns1() {
 		return polQuesAns1;
 	}
 
