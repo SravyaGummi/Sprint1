@@ -37,16 +37,22 @@ public class PolicyQuestionsServiceImpl implements PolicyQuestionsService{
 	
 	
 	@Override
-	public String getInput() {		//Accepts the input and validates the user name
+	public String getInput(String roleCode) {		//Accepts the input and validates the user name
+		
 		Scanner s1 =new Scanner(System.in);
-		System.out.println("Enter user Name ");
+		System.out.println("Enter user Name for policy creation ");
 		uName=s1.nextLine();
 		try{
 			UserCreation userName = new UserCreation(uName,checkUser);
 			UserCreation user1 = userDao.findName(userName);
+			
 			if (user1==null) {
 				uName=null;						//Throws  MismatchUserNameException if user name is not in database
-			throw new MismatchUserNameException("Wrong Username Entered");}}
+			throw new MismatchUserNameException("Wrong Username Entered");}
+			if(roleCode.equals("Agent") && user1.getRoleCode().equals("Admin")) {
+				System.out.println("No access for policy creation ");
+				uName=null;
+			}}
 			catch(MismatchUserNameException mismatch) {}
 		return uName;		
 	}
@@ -61,13 +67,13 @@ public class PolicyQuestionsServiceImpl implements PolicyQuestionsService{
 	@Override
 	public  List<Integer> dispPolQues(String busiQuesId) {
 		List<PolicyQuestions> polList = polQuesDao.dispPolQues(busiQuesId);
-		
 		List<PolicyQuestions> polListObj = polList.stream().collect(Collectors.toList());	//retrieve questions and answers which are retrived from database
+
 		List<Integer> ans = new ArrayList<Integer>();		//storing the option of the answer selected by the user in the list
 		
 		for(PolicyQuestions val:polListObj) {				
 			i++;
-			//System.out.println(val);						//displaying questions and answers
+			System.out.println(val);						//displaying questions and answers
 			Scanner s1 =new Scanner(System.in);
 			choice=s1.nextInt();
 			

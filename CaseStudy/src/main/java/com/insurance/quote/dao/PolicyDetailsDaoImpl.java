@@ -29,7 +29,6 @@ public class PolicyDetailsDaoImpl implements PolicyDetailsDao {
 
 	public List<PolicyDetails> getPolReport(int polNumReport) { // Retrieves list of details from policy details based
 																// on policy number for report generation
-
 		String qStr = "select NEW PolicyDetails( pd.questionDesc, pd.answer,pd.answerWeightAge) from PolicyDetails pd where pd.policyNumber=:num";
 		TypedQuery<PolicyDetails> query = entityManager.createQuery(qStr, PolicyDetails.class);
 		query.setParameter("num", polNumReport);

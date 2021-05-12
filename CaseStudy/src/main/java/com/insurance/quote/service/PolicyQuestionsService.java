@@ -11,8 +11,8 @@ public interface PolicyQuestionsService {
 	
 	public List<Integer> dispPolQues(String busiQuesId);
 
-	public String getInput();
-
 	public AccountCreation accCheck(String uName);
+
+	public String getInput(String roleCode);
 	
 }

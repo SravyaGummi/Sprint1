@@ -30,6 +30,11 @@ public class Policy implements Serializable {
 		this.accountNumber = accountNumber;
 	}
 	
+	
+	public void setPolicyPremium(float policyPremium) {
+		this.policyPremium = policyPremium;
+	}
+
 	public int getPolicyNumber() {
 		return policyNumber;
 	}

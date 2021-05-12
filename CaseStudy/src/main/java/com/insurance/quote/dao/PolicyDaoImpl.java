@@ -44,13 +44,11 @@ public class PolicyDaoImpl implements PolicyDao {
 	
 	@Override
 	public void updatePremium(int polNum,float premium) {	//updates the premium value in policy table when the policy is created
-	
-	  Query query = entityManager.createQuery("UPDATE Policy p SET p.policyPremium =:premium"+" WHERE p.policyNumber= :num");
-	  query.setParameter("premium",premium);
-	  query.setParameter("num",polNum);
-	  int rowsUpdated = query.executeUpdate();
-	  System.out.println(rowsUpdated);
-	}
+		Policy p=entityManager.find(Policy.class,polNum);
+		p.setPolicyPremium(premium);
+		entityManager.merge(p);
+		
+	 }
 	
 	
 	

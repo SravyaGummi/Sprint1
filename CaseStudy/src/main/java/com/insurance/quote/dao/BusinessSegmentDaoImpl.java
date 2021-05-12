@@ -27,9 +27,9 @@ public class BusinessSegmentDaoImpl implements BusinessSegmentDao {
 	public String getBusiName(int choice) { // Retrieves business segment name from database using sequence value of
 											// selected business name
 		String qStr = "select bs.busSegName from BusinessSegment bs where busSegSeq=:val";
-		TypedQuery query = entityManager.createQuery(qStr, String.class);
+		TypedQuery<String> query = entityManager.createQuery(qStr, String.class);
 		query.setParameter("val", choice);
-		String busiName = (String) query.getSingleResult();
+		String busiName = query.getSingleResult();
 		return busiName;
 	}
 

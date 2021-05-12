@@ -16,7 +16,6 @@ public class PolicyServiceImpl implements PolicyService{
 	
 	@Override
 	public AccountCreation getAcc(String userName) {	//returns account table data based on user name
-		//String userName = user.getUserName();
 		return accDao.getAcc(userName);
 	}
 	
@@ -30,6 +29,7 @@ public class PolicyServiceImpl implements PolicyService{
 
 	@Override
 	public void updatePremium(int polNum,float premium) {	//To update the premium in policy table
+		
 		polDao.beginTransaction();
 		polDao.updatePremium(polNum,premium);
 		polDao.commitTransaction();

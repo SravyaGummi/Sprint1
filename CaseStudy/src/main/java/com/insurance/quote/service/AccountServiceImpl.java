@@ -1,10 +1,11 @@
 package com.insurance.quote.service;
 
+
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import org.apache.log4j.Logger;
 import com.insurance.quote.dao.AccountDaoImpl;
 import com.insurance.quote.dao.BusinessSegmentDaoImpl;
 import com.insurance.quote.dao.UserDAOImpl;
@@ -16,6 +17,7 @@ import com.insurance.quote.exception.ZipCodeException;
 import com.insurance.quote.exception.NameException;
 
 public class AccountServiceImpl implements AccountService {
+	private static Logger log=Logger.getLogger(AccountServiceImpl.class.getName());
 	String name, city, street, state, ano, strZip;
 	int zip, accno;
 	String businessSegment, uName, choice, message = " ", checkUser = null;
@@ -46,8 +48,7 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public AccountCreation getInput(UserCreation user,String roleCode) {
 		// takes input from user for account creation
-		System.out.println(user+" "+roleCode);
-		
+		log.info(user+" "+roleCode);
 		
 		s1 = new Scanner(System.in);
 		System.out.println("Enter choice of Business Segment");
@@ -56,7 +57,7 @@ public class AccountServiceImpl implements AccountService {
 			uName=user.getUserName();
 		}
 		else {
-		System.out.println("Enter user Name ");
+		System.out.println("Enter user Name for account creation");
 		uName = s1.nextLine();}
 		System.out.println("Enter Name ");
 		name = s1.nextLine();
@@ -106,6 +107,7 @@ public class AccountServiceImpl implements AccountService {
 		try { // Checks if user name entered has an existing account
 			UserCreation userName = new UserCreation(uName, checkUser);
 			UserCreation user1 = dao.findName(userName);
+			String accRoleCode=user1.getRoleCode();
 			AccountCreation acc = accDao.getAcc(uName);
 			if (acc != null) {
 				System.out.println("User has an existing account");
@@ -113,14 +115,18 @@ public class AccountServiceImpl implements AccountService {
 			if (user1 == null) { // throws MismatchUserNameException if user name not found
 				throw new MismatchUserNameException("Wrong Username Entered");
 			} else if (matcher1.matches() && matcher2.matches() && acc == null) { // Creates account if Zip code, user
-																					// name pattern matches and user has
+				if((roleCode.equals("Agent") && accRoleCode.equals("Insured")) ||
+				(roleCode.equals("Agent")&&accRoleCode.equals("Agent"))||
+				(roleCode.equals("Admin")&&accRoleCode.equals("Admin"))||
+				(roleCode.equals("Admin")&&accRoleCode.equals("Agent"))||
+				(roleCode.equals("Admin")&&accRoleCode.equals("Insured"))||
+				(roleCode.equals("Insured") && accRoleCode.equals("Insured"))) {																	// name pattern matches and user has
 																					// no existing account
 				zip = Integer.parseInt(strZip);
 				ac = new AccountCreation(name, street, state, city, zip, businessSegment, uName);
-			}
-		} catch (MismatchUserNameException mismatch) {
+			} else{System.out.println("No access for account creation ");}}}
+		 catch (MismatchUserNameException mismatch) {
 		}
-
 		return ac;
 
 	}

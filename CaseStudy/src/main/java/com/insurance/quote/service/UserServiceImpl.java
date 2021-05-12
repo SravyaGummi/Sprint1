@@ -5,6 +5,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import com.insurance.quote.dao.UserDAOImpl;
 import com.insurance.quote.entities.AccountCreation;
 import com.insurance.quote.entities.BusinessSegment;
@@ -14,9 +16,14 @@ import com.insurance.quote.entities.UserCreation;
 import com.insurance.quote.exception.NoUserFoundException;
 import com.insurance.quote.exception.UserNameException;
 import com.insurance.quote.exception.WrongPasswordException;
+
+import jdk.internal.org.jline.utils.Log;
+
 import com.insurance.quote.exception.PasswordCriteriaException;
 
 public class UserServiceImpl implements UserService {
+	
+	private static Logger log=Logger.getLogger(UserServiceImpl.class.getName());
 	String userName, password, rolecode, choice, message;
 	int opt = 0;
 	Scanner s1;
@@ -34,16 +41,19 @@ public class UserServiceImpl implements UserService {
 
 		try {
 			if (user1 == null) { // if user name is not found throws NoUserFoundException
+				log.info("Login Failed - Wrong username entered");
 				throw new NoUserFoundException("Login Failed - Wrong username entered");
 			} else {
 				strPass = user1.getPassword();
 				strUser = user1.getUserName();
 				// Checks for matching user name and password
 				if (strPass.equals(pass) && strUser.equals(userName)) {
+					log.debug("Login Sucessful");
 					System.out.println("Login Sucessful");
 					strRole = user1.getRoleCode();
 				} else { // If password is different it throws WrongPasswordException
 					strRole = null;
+					log.info("Login Failed - Wrong password entered");
 					throw new WrongPasswordException("Login failed - Wrong password entered");
 				}
 			}
@@ -64,6 +74,7 @@ public class UserServiceImpl implements UserService {
 				message = userDao.profileCreation(user);
 				userDao.commitTransaction();
 			} else {
+				log.info("UserName already exists ");
 				throw new UserNameException("UserName already exists "); // Throws UserNameException if user name is in
 																			// database
 			}
@@ -141,14 +152,25 @@ public class UserServiceImpl implements UserService {
 			Pattern pattern = Pattern.compile(passwordRegex);
 			Matcher matcher = pattern.matcher(password);
 
-			System.out.println("Enter Role ");
-			rolecode = s1.nextLine();
+			System.out.println("Select Role "+"\n"+"(1) Insured"+"\n"+"(2) Agent"+"\n"+"(3) Admin");
+			String role = s1.nextLine();
+			switch(role) {
+			case "1":rolecode="Insured";
+				break;
+			case "2":rolecode="Agent";
+				break;
+			case "3":rolecode="Admin";
+				break;
+			default:System.out.println("Wrong Option entered");
+			}
+			
 			if (matcher.matches()) {
 				userCreation2 = new UserCreation(userName, password, rolecode);
 			}
 
 			// throws PasswordCriteriaException if pattern
 			else {
+				log.warn("Password criteria not acheived");
 				throw new PasswordCriteriaException("Password criteria not acheived");
 			}
 		} catch (PasswordCriteriaException e) {
@@ -185,10 +207,10 @@ public class UserServiceImpl implements UserService {
 					}
 
 					account = accountService.getInput(user,roleCode); // takes necessary inputs for user creation which are stored in entity class constructor and returns its object
-					System.out.println(account);
 					if (account.getInsuredName() != null) {
 						System.out.println(account);
 						message = accountService.accountCreation(account); // persist the data in database
+						log.debug(message);
 						System.out.println(message);
 					}
 				}
@@ -207,6 +229,7 @@ public class UserServiceImpl implements UserService {
 							}
 						}
 					} else {
+						log.info("No account present for the user");
 						System.out.println("No account present for the user");
 					}
 				}
@@ -228,10 +251,10 @@ public class UserServiceImpl implements UserService {
 					}
 
 					account = accountService.getInput(user,roleCode); // takes necessary inputs for user creation which are stored in entity class constructor and returns its object
-					System.out.println(account);
 					if (account.getInsuredName() != null) {
-						System.out.println(account);
+					
 						message = accountService.accountCreation(account); // persist the data in database
+						log.debug(message);
 						System.out.println(message);
 					}
 				}
@@ -239,7 +262,7 @@ public class UserServiceImpl implements UserService {
 			case 2:
 				// policy creation
 
-			userName = policyQuesService.getInput(); // Takes input for policy creation
+			userName = policyQuesService.getInput(roleCode); // Takes input for policy creation
 
 				if (userName != null) {
 					AccountCreation accCheck = policyQuesService.accCheck(userName);
@@ -247,17 +270,15 @@ public class UserServiceImpl implements UserService {
 						account = policyService.getAcc(userName);
 						BusinessSegment objID = policyQuesService.viewBusiQuesId(account); // gets business segment id
 						String busiQuesID = objID.getBusSegId();
-						List<Integer> ans = policyQuesService.dispPolQues(busiQuesID); // retrieve and display questions
-						// and answers which are
-						// retrived from database
-						System.out.println(ans); // remove
+						List<Integer> ans = policyQuesService.dispPolQues(busiQuesID); // retrieve and display questions and answers which are retrived from database
+						log.info(ans); // test
 
 						int accNum = account.getAccountNumber();
-						System.out.println(account); // remove
+						log.info(account); // test
 						policyService.policyEntry(accNum, premium); // Persisting account number and premium as zero in policy table
 						Policy polData = policyDetailsService.getPol(accNum, premium); // Retrieving policy table data from database for particular account number
 						polNum = polData.getPolicyNumber(); // Getting policy number using getter methods
-						System.out.println(polNum); // remove
+						log.info(polNum); // test
 						premium = policyDetailsService.getDetails(ans, busiQuesID, polNum); // persist the  options selected by user in policy tables database and calculate premium
 						policyService.updatePremium(polNum, premium); // updating the premium value in policy table
 					}
@@ -268,10 +289,10 @@ public class UserServiceImpl implements UserService {
 				PolicyListService polList1 = new PolicyListServiceImpl(); // retrieve list of policies from database
 				 userName = polList1.getInput();
 				if (userName != null) {
-					AccountCreation accc = policyService.getAcc(userName);
-					if (accc != null) {
-						AccountCreation acc = policyService.getAcc(userName);
-						int accNum = acc.getAccountNumber();
+				account = policyService.getAcc(userName);
+					if (account != null) {
+						account = policyService.getAcc(userName);
+						int accNum = account.getAccountNumber();
 						if (polList1.getPolCheck(accNum) != null) {
 							List<Policy> polDataList = policyDetailsService.getPolList(accNum);
 							for (Policy value : polDataList) { // display list of policies
@@ -279,6 +300,7 @@ public class UserServiceImpl implements UserService {
 							}
 						}
 					} else {
+						log.error("No account present for the user");
 						System.out.println("No account present for the user");
 					}
 				}
@@ -293,6 +315,7 @@ public class UserServiceImpl implements UserService {
 			case 1:// User creation
 				user = getInputCreate(); // Takes input and validates the data
 				message = profileCreation(user); // Creates a profile for user
+				log.info(message);
 				System.out.println(message);
 				break;
 
@@ -305,10 +328,10 @@ public class UserServiceImpl implements UserService {
 					}
 
 					account = accountService.getInput(user,roleCode); // takes necessary inputs for user creation which are stored in entity class constructor and returns its object
-					System.out.println(account);
+					
 					if (account.getInsuredName() != null) {
-						System.out.println(account);
 						message = accountService.accountCreation(account); // persist the data in database
+						
 						System.out.println(message);
 					}
 				}
@@ -316,27 +339,25 @@ public class UserServiceImpl implements UserService {
 			case 3:
 				// policy creation
 
-				 userName = policyQuesService.getInput();
-
+				 userName = policyQuesService.getInput(roleCode);
 				if (userName != null) {
 					AccountCreation accCheck = policyQuesService.accCheck(userName);
 					if (accCheck != null) {
 						account = policyService.getAcc(userName);
 						BusinessSegment objID = policyQuesService.viewBusiQuesId(account); // gets business segment id
 						String busiQuesID = objID.getBusSegId();
-						List<Integer> ans = policyQuesService.dispPolQues(busiQuesID); // retrieve and display questions
-						// and answers which are
-						// retrived from database
-						// System.out.println(ans); //remove
-
+						List<Integer> ans = policyQuesService.dispPolQues(busiQuesID); // retrieve and display questions and answers which are retrived from database
+						log.info(ans); 
 						int accNum = account.getAccountNumber();
-						// System.out.println(acc); //remove
+						log.info(accNum);
 						policyService.policyEntry(accNum, premium); // Persisting account number and premium as zero in policy table
 						Policy polData = policyDetailsService.getPol(accNum, premium); // Retrieving policy table data from database for particular account number
 						polNum = polData.getPolicyNumber(); // Getting policy number using getter methods
-						// System.out.println(polNum); //remove
+						 log.info(polNum);
 						premium = policyDetailsService.getDetails(ans, busiQuesID, polNum); // persist the options  selected by user in policy tables database and calculate premium
+						
 						policyService.updatePremium(polNum, premium); // updating the premium value in  policy table
+						
 					}
 				}
 				break;
@@ -376,8 +397,7 @@ public class UserServiceImpl implements UserService {
 							}
 						}
 						// Report Generation
-						polNumReport = polReportService.getInput(); // get account number of selected user
-																	// to view the report
+						polNumReport = polReportService.getInput(); // get account number of selected user to view the report
 						accNumReport = policyDetailsService.getPolAccNum(polNumReport); // retrieve policy table details
 						account = polReportService.getAccReport(accNumReport); // retrieve account details of  user for report
 						System.out.println(account);
@@ -386,7 +406,7 @@ public class UserServiceImpl implements UserService {
 							System.out.println(report);
 						}
 						polReportPremium = policyDetailsService.getPolPremium(polNumReport); // Retrieve premium value for report
-						System.out.println(polReportPremium);
+						System.out.println("The total premium value of policy number of "+polNumReport+" is : " + polReportPremium+"\n");
 
 					}
 				} else {

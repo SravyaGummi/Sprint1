@@ -100,12 +100,13 @@ public class AccountCreation implements Serializable{
 	}
 	@Override
 	public String toString() {
-	return "Insured Name= " + insuredName +"\n"
-	+" Insured City= " + insuredCity +"\n"
-	+" Insured Street= "+ insuredStreet +"\n"
-	+" Insured State= " + insuredState +"\n"
-	+" Insured Zip= " + insuredZip +"\n"
-	+" Business Segment=" + businessSegment;
+	return
+	 "Insured Name	=	" + insuredName +"\n"
+	+"Insured City	=	" + insuredCity +"\n"
+	+"Insured Street	=	"+ insuredStreet +"\n"
+	+"Insured State	=	" + insuredState +"\n"
+	+"Insured Zip	=	" + insuredZip +"\n"
+	+"Business Segment=	" + businessSegment;
 	}
 	
 	

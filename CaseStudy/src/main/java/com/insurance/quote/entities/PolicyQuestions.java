@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="Policy_Questions")
+@Table(name="policy_questions")
 public class PolicyQuestions implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -105,8 +105,10 @@ public class PolicyQuestions implements Serializable{
 
 	@Override
 	public String toString() {
-		return  polQuesDesc + ": (1) " + polQuesAns1
-				+ " (2) " + polQuesAns2 + " (3) " + polQuesAns3 ;
+		return  polQuesDesc+" : " + "\n"+
+				"(1) " + polQuesAns1  + "\n"
+				+ "(2) " + polQuesAns2  + "\n"
+				+ "(3) " + polQuesAns3 ;
 	}
 
 }

@@ -3,6 +3,8 @@ package com.insurance.quote.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.log4j.Logger;
+
 import com.insurance.quote.dao.PolicyDaoImpl;
 import com.insurance.quote.dao.PolicyDetailsDaoImpl;
 import com.insurance.quote.dao.PolicyQuestionsDaoImpl;
@@ -11,6 +13,7 @@ import com.insurance.quote.entities.PolicyDetails;
 import com.insurance.quote.entities.PolicyQuestions;
 
 public class PolicyDetailsServiceImpl implements PolicyDetailsService {
+	private static Logger log=Logger.getLogger(PolicyDetailsServiceImpl.class.getName());
 	int i = 0, premium, weightAge, policyNumber, answerWeightAge;
 	String strAnswer, strQId, strQuesDesc, questionId, questionDesc, answer;
 
@@ -29,17 +32,17 @@ public class PolicyDetailsServiceImpl implements PolicyDetailsService {
 		List<Policy> policy = polDao.getPolicy();
 		List<Integer> pol = policy.stream().filter(polAcc -> polAcc.getPolicyNumber() == polNum)
 				.map(acc -> acc.getAccountNumber()).collect(Collectors.toList());
-		System.out.println(pol);
+		log.info(pol);
 		int accNum = pol.get(0);
 		return accNum;
 	}
 
 	@Override
 	public float getDetails(List<Integer> ans, String busiQuesID, int polNum) { // Persist the values obtained from
-																				// stream API and returns premium value
+																			// stream API and returns premium value
 		int size = ans.size();
 		List<PolicyQuestions> polList = polQuesDao.dispPolQues(busiQuesID);
-
+		
 		for (i = 0; i < size; i++) {
 			ans.get(i);
 			List<String> qId = polList.stream().filter(seq -> seq.getPolQuesSeq() == (i + 1))
@@ -54,6 +57,7 @@ public class PolicyDetailsServiceImpl implements PolicyDetailsService {
 				List<Integer> answerWeight = polList.stream().filter(seq -> seq.getPolQuesSeq() == (i + 1))
 						.map(ans1 -> ans1.getPolQuesAns1weightage()).collect(Collectors.toList());
 				strAnswer = answer.get(0);
+				
 				weightAge = answerWeight.get(0);
 				premium += weightAge;
 			} else if (ans.get(i) == 2) {
@@ -74,9 +78,10 @@ public class PolicyDetailsServiceImpl implements PolicyDetailsService {
 				premium += weightAge;
 			}
 			polDetails = new PolicyDetails(polNum, strQId, strQuesDesc, strAnswer, weightAge);
-			System.out.println(polDetails);
+		
+			log.info(polDetails);
 			polDetailsDao.beginTransaction();
-			System.out.println(polDetailsDao.insertDetails(polDetails));
+			polDetailsDao.insertDetails(polDetails);
 			polDetailsDao.commitTransaction();
 
 		}

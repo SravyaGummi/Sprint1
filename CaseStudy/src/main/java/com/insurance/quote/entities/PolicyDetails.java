@@ -51,9 +51,9 @@ public class PolicyDetails implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Question = "+ questionDesc +
-				"Answer Selected= " + answer +
-				"WeightAge=" + answerWeightAge+ "\n";
+		return "\n"+"Question 	= 	"+ questionDesc +"\n"+
+				"Answer Selected	= 	" + answer +"\n"+
+				"WeightAge	=	" + answerWeightAge+ "\n";
 	}
 	
 		
