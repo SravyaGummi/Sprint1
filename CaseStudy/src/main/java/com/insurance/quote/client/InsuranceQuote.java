@@ -19,7 +19,7 @@ public class InsuranceQuote {
 		UserService userService = new UserServiceImpl();
 		UserCreation user = null;
 
-		Scanner s1 = new Scanner(System.in);
+		Scanner s1 = new Scanner(System.in);	//scanner statement
 
 		String logflag = "N";
 		String exitflag = "N";
